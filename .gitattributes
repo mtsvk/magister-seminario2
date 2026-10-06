@@ -1,0 +1,1 @@
+data/database/cmf_carteras_2000_2026.sqlite filter=lfs diff=lfs merge=lfs -text

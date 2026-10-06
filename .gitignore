@@ -46,3 +46,7 @@ Thumbs.db
 pdfs/
 *.pdf
 data/
+
+# SQLite de despliegue Streamlit
+!data/database/
+!data/database/cmf_carteras_2000_2026.sqlite

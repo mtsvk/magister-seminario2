@@ -1,4 +1,4 @@
-"""
+﻿"""
 04_inspect_cmf_sqlite.py
 
 Visor y auditor interactivo para:
@@ -11,16 +11,16 @@ Objetivos:
 - Filtrar y buscar registros.
 - Revisar cobertura temporal.
 - Perfilar columnas.
-- Detectar NULL, vacíos, caracteres sospechosos y duplicados.
-- Ejecutar consultas SQL de diagnóstico.
+- Detectar NULL, vacÃ­os, caracteres sospechosos y duplicados.
+- Ejecutar consultas SQL de diagnÃ³stico.
 - Exportar muestras sospechosas.
 - Registrar hallazgos para corregir el pipeline aguas arriba.
 
 IMPORTANTE:
-La conexión SQLite se abre en modo READ ONLY.
+La conexiÃ³n SQLite se abre en modo READ ONLY.
 Este script NO modifica la base de datos.
 
-Ejecución:
+EjecuciÃ³n:
 
     py -m pip install streamlit pandas
     streamlit run 04_inspect_cmf_sqlite.py
@@ -38,10 +38,10 @@ import streamlit as st
 
 
 # ======================================================================
-# CONFIGURACIÓN
+# CONFIGURACIÃ“N
 # ======================================================================
 
-ROOT = Path(r"C:\Workspace\projects\magister-seminario2")
+ROOT = Path(__file__).resolve().parent
 
 DB_PATH = (
     ROOT
@@ -60,8 +60,8 @@ LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 
 st.set_page_config(
-    page_title="CMF · Inspector SQLite",
-    page_icon="🔎",
+    page_title="CMF Â· Inspector SQLite",
+    page_icon="ðŸ”Ž",
     layout="wide",
 )
 
@@ -144,7 +144,7 @@ def table_has_column(table: str, column: str) -> bool:
 
 def format_int(n) -> str:
     if n is None:
-        return "—"
+        return "â€”"
     return f"{int(n):,}".replace(",", ".")
 
 
@@ -213,7 +213,7 @@ def build_filter(
     if operator == "=":
         return f"CAST({col} AS TEXT) = ?", [value]
 
-    if operator == "≠":
+    if operator == "â‰ ":
         return f"CAST({col} AS TEXT) <> ?", [value]
 
     if operator == "contiene":
@@ -231,10 +231,10 @@ def build_filter(
     if operator == "no NULL":
         return f"{col} IS NOT NULL", []
 
-    if operator == "vacío":
+    if operator == "vacÃ­o":
         return f"TRIM(CAST({col} AS TEXT)) = ''", []
 
-    if operator == "no vacío":
+    if operator == "no vacÃ­o":
         return (
             f"{col} IS NOT NULL "
             f"AND TRIM(CAST({col} AS TEXT)) <> ''",
@@ -248,11 +248,11 @@ def build_filter(
 # CABECERA
 # ======================================================================
 
-st.title("🔎 CMF · Inspector SQLite")
+st.title("ðŸ”Ž CMF Â· Inspector SQLite")
 
 st.caption(
-    "Auditoría exploratoria de la base histórica de carteras CMF. "
-    "La conexión está abierta en modo solo lectura."
+    "AuditorÃ­a exploratoria de la base histÃ³rica de carteras CMF. "
+    "La conexiÃ³n estÃ¡ abierta en modo solo lectura."
 )
 
 if not DB_PATH.exists():
@@ -265,7 +265,7 @@ db_size = DB_PATH.stat().st_size
 
 c1, c2, c3 = st.columns(3)
 
-c1.metric("Tamaño SQLite", format_bytes(db_size))
+c1.metric("TamaÃ±o SQLite", format_bytes(db_size))
 c2.metric("Tablas", format_int(len(tables)))
 c3.metric(
     "Modo",
@@ -327,7 +327,7 @@ with tab_resumen:
     )
 
     if st.button(
-        "Calcular número de filas por tabla",
+        "Calcular nÃºmero de filas por tabla",
         key="count_all_tables",
     ):
         rows = []
@@ -452,14 +452,14 @@ with tab_explorar:
 
     operators = [
         "=",
-        "≠",
+        "â‰ ",
         "contiene",
         "empieza con",
         "termina con",
         "NULL",
         "no NULL",
-        "vacío",
-        "no vacío",
+        "vacÃ­o",
+        "no vacÃ­o",
     ]
 
     for i in range(3):
@@ -492,8 +492,8 @@ with tab_explorar:
         if operator not in {
             "NULL",
             "no NULL",
-            "vacío",
-            "no vacío",
+            "vacÃ­o",
+            "no vacÃ­o",
         }:
             value = st.text_input(
                 f"Valor filtro {i + 1}",
@@ -518,7 +518,7 @@ with tab_explorar:
             + " AND ".join(filter_sql)
         )
 
-    st.markdown("#### Orden y paginación")
+    st.markdown("#### Orden y paginaciÃ³n")
 
     c1, c2, c3, c4 = st.columns(4)
 
@@ -528,7 +528,7 @@ with tab_explorar:
     )
 
     direction = c2.selectbox(
-        "Dirección",
+        "DirecciÃ³n",
         ["ASC", "DESC"],
     )
 
@@ -605,7 +605,7 @@ with tab_explorar:
 
         with st.expander("Ver SQL utilizado"):
             st.code(sql, language="sql")
-            st.write("Parámetros:", params)
+            st.write("ParÃ¡metros:", params)
 
     except Exception as e:
         st.exception(e)
@@ -627,7 +627,7 @@ with tab_cobertura:
 
     if not temporal_tables:
         st.warning(
-            "No encontré tablas con una columna llamada `periodo`."
+            "No encontrÃ© tablas con una columna llamada `periodo`."
         )
 
     else:
@@ -651,17 +651,17 @@ with tab_cobertura:
         c1, c2, c3, c4 = st.columns(4)
 
         c1.metric(
-            "Primer período",
+            "Primer perÃ­odo",
             summary.loc[0, "periodo_min"],
         )
 
         c2.metric(
-            "Último período",
+            "Ãšltimo perÃ­odo",
             summary.loc[0, "periodo_max"],
         )
 
         c3.metric(
-            "Períodos",
+            "PerÃ­odos",
             format_int(
                 summary.loc[0, "periodos"]
             ),
@@ -697,7 +697,7 @@ with tab_cobertura:
 
             st.line_chart(chart["filas"])
 
-        st.markdown("#### Períodos con formato sospechoso")
+        st.markdown("#### PerÃ­odos con formato sospechoso")
 
         invalid_period_sql = f"""
         SELECT
@@ -719,7 +719,7 @@ with tab_cobertura:
 
         if invalid.empty:
             st.success(
-                "No se detectaron períodos con formato evidentemente inválido."
+                "No se detectaron perÃ­odos con formato evidentemente invÃ¡lido."
             )
         else:
             st.warning(
@@ -810,7 +810,7 @@ with tab_perfil:
                 format_int(n_distinct),
             )
 
-        st.markdown("#### Valores más frecuentes")
+        st.markdown("#### Valores mÃ¡s frecuentes")
 
         top_sql = f"""
         SELECT
@@ -869,10 +869,10 @@ with tab_calidad:
     columns = get_columns(table)["name"].tolist()
 
     # ------------------------------------------------------------------
-    # NULL / VACÍOS
+    # NULL / VACÃOS
     # ------------------------------------------------------------------
 
-    st.markdown("### NULL y valores vacíos")
+    st.markdown("### NULL y valores vacÃ­os")
 
     if st.button(
         "Revisar todas las columnas",
@@ -933,11 +933,11 @@ with tab_calidad:
                 {
                     "columna": colname,
                     "null": n_null,
-                    "vacíos": n_empty,
-                    "problemáticos": (
+                    "vacÃ­os": n_empty,
+                    "problemÃ¡ticos": (
                         n_null + n_empty
                     ),
-                    "% problemáticos": (
+                    "% problemÃ¡ticos": (
                         100
                         * (n_null + n_empty)
                         / n_total
@@ -950,7 +950,7 @@ with tab_calidad:
         missing_df = pd.DataFrame(rows)
 
         missing_df = missing_df.sort_values(
-            "problemáticos",
+            "problemÃ¡ticos",
             ascending=False,
         )
 
@@ -976,24 +976,24 @@ with tab_calidad:
 
     suspicious_patterns = [
         " ",
-        "Ã",
-        "Â",
+        "Ãƒ",
+        "Ã‚",
         "\u00a0",
     ]
 
     chosen_pattern = st.selectbox(
-        "Patrón",
+        "PatrÃ³n",
         suspicious_patterns,
         format_func=lambda x: {
             " ": "   replacement character",
-            "Ã": "Ã  posible mojibake UTF-8",
-            "Â": "Â  posible mojibake UTF-8",
+            "Ãƒ": "Ãƒ  posible mojibake UTF-8",
+            "Ã‚": "Ã‚  posible mojibake UTF-8",
             "\u00a0": "espacio no separable",
         }.get(x, repr(x)),
     )
 
     if st.button(
-        "Buscar patrón",
+        "Buscar patrÃ³n",
         key="search_encoding",
     ):
         col = qident(suspicious_col)
@@ -1012,7 +1012,7 @@ with tab_calidad:
 
         if df.empty:
             st.success(
-                "No encontré coincidencias en la muestra buscada."
+                "No encontrÃ© coincidencias en la muestra buscada."
             )
         else:
             st.warning(
@@ -1083,8 +1083,8 @@ with tab_calidad:
     st.markdown("### Duplicados")
 
     st.caption(
-        "Selecciona las columnas que deberían identificar "
-        "un registro de manera única. "
+        "Selecciona las columnas que deberÃ­an identificar "
+        "un registro de manera Ãºnica. "
         "No selecciones toda la tabla salvo que sea necesario."
     )
 
@@ -1153,17 +1153,17 @@ with tab_calidad:
     st.divider()
 
     # ------------------------------------------------------------------
-    # DISTRIBUCIÓN POR PERÍODO
+    # DISTRIBUCIÃ“N POR PERÃODO
     # ------------------------------------------------------------------
 
     if "periodo" in columns:
 
         st.markdown(
-            "### Saltos en cantidad de registros por período"
+            "### Saltos en cantidad de registros por perÃ­odo"
         )
 
         if st.button(
-            "Calcular distribución",
+            "Calcular distribuciÃ³n",
             key="quality_period_distribution",
         ):
 
@@ -1205,10 +1205,10 @@ with tab_calidad:
 
 with tab_sql:
 
-    st.subheader("Consola SQL de diagnóstico")
+    st.subheader("Consola SQL de diagnÃ³stico")
 
     st.info(
-        "La conexión está en modo `query_only` y la base se abrió "
+        "La conexiÃ³n estÃ¡ en modo `query_only` y la base se abriÃ³ "
         "con `mode=ro`: esta consola sirve para consultas, no para "
         "modificar registros."
     )
@@ -1229,7 +1229,7 @@ ORDER BY name;
 
     limit_result = int(
         st.number_input(
-            "Máximo de filas a mostrar",
+            "MÃ¡ximo de filas a mostrar",
             min_value=10,
             max_value=100000,
             value=5000,
@@ -1297,10 +1297,10 @@ La idea es no corregir silenciosamente la SQLite.
 
 Cuando aparezca un problema, registra:
 
-1. dónde está;
-2. por qué parece incorrecto;
+1. dÃ³nde estÃ¡;
+2. por quÃ© parece incorrecto;
 3. la consulta que lo demuestra;
-4. qué habría que corregir en el RAW o en el pipeline.
+4. quÃ© habrÃ­a que corregir en el RAW o en el pipeline.
 """
     )
 
@@ -1311,12 +1311,12 @@ Cuando aparezca un problema, registra:
     )
 
     category = st.selectbox(
-        "Categoría",
+        "CategorÃ­a",
         [
             "dato faltante",
             "duplicado",
             "encoding",
-            "período",
+            "perÃ­odo",
             "esquema",
             "valor improbable",
             "identificador",
@@ -1326,7 +1326,7 @@ Cuando aparezca un problema, registra:
     )
 
     description = st.text_area(
-        "Descripción del hallazgo"
+        "DescripciÃ³n del hallazgo"
     )
 
     sql_query = st.text_area(
@@ -1334,7 +1334,7 @@ Cuando aparezca un problema, registra:
     )
 
     upstream_action = st.text_area(
-        "Corrección sugerida aguas arriba",
+        "CorrecciÃ³n sugerida aguas arriba",
         placeholder=(
             "Ej.: revisar RAW 2021-03 NACI, "
             "normalizar columna X y reconstruir SQLite."
@@ -1348,7 +1348,7 @@ Cuando aparezca un problema, registra:
 
         if not description.strip():
             st.error(
-                "Escribe una descripción."
+                "Escribe una descripciÃ³n."
             )
         else:
             append_finding(
