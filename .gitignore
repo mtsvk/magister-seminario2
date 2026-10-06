@@ -1,0 +1,48 @@
+﻿# ============================================================
+# Seminario II - archivos que NO deben versionarse
+# ============================================================
+
+# Datos RAW descargados desde CMF
+data/_staging/
+
+# Bases de datos generadas
+data/database/
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs de ejecución
+logs/
+
+# Exportaciones generadas
+data/exports/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporales
+*.tmp
+*.bak
+~$*
+
+# Bibliografía y datasets locales
+pdfs/
+*.pdf
+data/
